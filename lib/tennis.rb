@@ -34,10 +34,6 @@ include ScoringRules
 		reset_points_versus opponent
 	end
 
-	def advantage_over? opponent
-		self.points_won == 5 && opponent.points_won == 4
-	end
-
 	def loses_advantage_over? opponent
 		self.points_won == 1 && opponent.points_won == 1
 	end
@@ -63,7 +59,7 @@ include ScoringRules
 	end
 
 	def advantage_match_point_versus? opponent
-			deuce? && (self.points_won == 2)
+		deuce? && (self.points_won == 2)
 	end
 
 	def normal_match_point_versus?(opponent)
