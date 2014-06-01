@@ -21,60 +21,64 @@ include ScoringRules
 	end
 
 	def score
-		if deuce? == false
-			@score = NORMAL_SCORING[points_won]
-		else
-			@score = DEUCE_SCORING[points_won]
-		end
+		@score = deuce? ? DEUCE_SCORING[points_won] : NORMAL_SCORING[points_won]
 	end
 
-	def deuce_with opponent
+	def deuce_with? opponent
 		self.points_won == 3 && opponent.points_won == 3
 	end
 
-	def advantage_over opponent
+	def deuce_called_with! opponent
+		self.deuce = true
+		opponent.deuce = true
+		reset_points_versus opponent
+	end
+
+	def advantage_over? opponent
 		self.points_won == 5 && opponent.points_won == 4
 	end
 
-	def loses_advantage_over opponent
+	def loses_advantage_over? opponent
 		self.points_won == 1 && opponent.points_won == 1
+	end
+
+	def advantage_lost_against opponent
+		self.points_won -= 1
+		opponent.points_won -= 1
+	end
+
+	def reset_points_versus opponent
+		self.points_won = 0
+		opponent.points_won = 0
 	end
 
 	def wins_game_over opponent
 		self.games_won += 1
-		self.points_won = 0
-		opponent.points_won = 0
+		reset_points_versus opponent
+		@deuce = false
 	end
 
 	def games_won
 		@games_won
 	end
 
-	def advantage_match_point_versus opponent
+	def advantage_match_point_versus? opponent
 			deuce? && (self.points_won == 2)
 	end
 
-	def normal_match_point_versus(opponent)
+	def normal_match_point_versus?(opponent)
 		self.points_won == 4 && opponent.points_won < 4
 	end
 
-	def match_point_versus opponent
-		(advantage_match_point_versus opponent) || (normal_match_point_versus opponent)
+	def wins_match_point_versus? opponent
+		(advantage_match_point_versus? opponent) || (normal_match_point_versus? opponent)
 	end
 
 	def beat opponent
 		self.points_won += 1
-		if deuce_with opponent
-			self.deuce = true
-			opponent.deuce = true
-			self.points_won = 0
-			opponent.points_won = 0
-		elsif self.loses_advantage_over opponent
-			self.points_won -= 1
-			opponent.points_won -= 1
-		elsif match_point_versus(opponent)
-			self.wins_game_over opponent
-		end
+		deuce_called_with! opponent if deuce_with? opponent
+		advantage_lost_against opponent if self.loses_advantage_over? opponent
+		self.wins_game_over opponent if wins_match_point_versus?(opponent)
 	end
 
 end
