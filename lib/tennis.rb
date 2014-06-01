@@ -2,7 +2,7 @@ require_relative 'scoring_rules'
 
 class Player
 
-include ScoringRules
+	include ScoringRules
 
 	attr_accessor :score, :points_won, :games_won, :deuce
 
@@ -24,7 +24,7 @@ include ScoringRules
 		@score = deuce? ? DEUCE_SCORING[points_won] : NORMAL_SCORING[points_won]
 	end
 
-	def deuce_with? opponent
+	def in_deuce_with? opponent
 		self.points_won == 3 && opponent.points_won == 3
 	end
 
@@ -72,7 +72,7 @@ include ScoringRules
 
 	def beat opponent
 		self.points_won += 1
-		deuce_called_with! opponent if deuce_with? opponent
+		deuce_called_with! opponent if in_deuce_with? opponent
 		advantage_lost_against opponent if self.loses_advantage_over? opponent
 		self.wins_game_over opponent if wins_match_point_versus?(opponent)
 	end
