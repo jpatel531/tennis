@@ -1,14 +1,19 @@
+require_relative 'scoring_rules'
+
 class Player
 
-	attr_accessor :score, :points_won, :games_won
+include ScoringRules
+
+	attr_accessor :score, :points_won, :games_won, :deuce
 
 	def initialize
 		@points_won = 0
 		@games_won = 0
+		@deuce = false
 	end
 
-	def score_cast
-		["love","fifteen","thirty","forty", "deuce", "advantage"]
+	def deuce?
+		@deuce
 	end
 
 	def points_won
@@ -16,7 +21,11 @@ class Player
 	end
 
 	def score
-		@score = score_cast[points_won]
+		if deuce? == false
+			@score = NORMAL_SCORING[points_won]
+		else
+			@score = DEUCE_SCORING[points_won]
+		end
 	end
 
 	def deuce_with opponent
@@ -28,7 +37,7 @@ class Player
 	end
 
 	def loses_advantage_over opponent
-		self.points_won == 5 && opponent.points_won == 5
+		self.points_won == 1 && opponent.points_won == 1
 	end
 
 	def wins_game_over opponent
@@ -41,15 +50,25 @@ class Player
 		@games_won
 	end
 
-	def match_point_versus(opponent)
-		(self.points_won == 4 && opponent.points_won < 4) || ((self.points_won == 6) && (opponent.points_won == 4))
+	def advantage_match_point_versus opponent
+			deuce? && (self.points_won == 2)
+	end
+
+	def normal_match_point_versus(opponent)
+		self.points_won == 4 && opponent.points_won < 4
+	end
+
+	def match_point_versus opponent
+		(advantage_match_point_versus opponent) || (normal_match_point_versus opponent)
 	end
 
 	def beat opponent
 		self.points_won += 1
 		if deuce_with opponent
-			self.points_won += 1
-			opponent.points_won += 1
+			self.deuce = true
+			opponent.deuce = true
+			self.points_won = 0
+			opponent.points_won = 0
 		elsif self.loses_advantage_over opponent
 			self.points_won -= 1
 			opponent.points_won -= 1
