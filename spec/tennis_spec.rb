@@ -23,7 +23,12 @@ describe Player do
 		expect(player.score).to eq "forty"
 	end
 
-	it "will go to deuce when theirs and the opponent scores are both 40"
+	it "will go to deuce when theirs and the opponent scores are both 40" do
+		3.times {player.beat opponent}
+		3.times {opponent.beat player}
+		# expect(player.deuce?).to be_true
+	end
+
 
 
 end

@@ -1,26 +1,38 @@
 class Player
 
-	attr_accessor :score
-	attr_accessor :games_won
+	attr_accessor :score, :points_won, #:deuce
 
 	def initialize
-		@games_won = 0
+		@points_won = 0
+		# @deuce = false
 	end
 
 	def score_cast
 		["love","fifteen","thirty","forty"]
 	end
 
-	def games_won
-		@games_won
+	def points_won
+		@points_won
 	end
 
 	def score
-		@score = score_cast[games_won]
+		@score = score_cast[points_won] #unless deuce?
+		# @score = tie_cast[points_won] if deuce?
+	end
+
+	def deuce!
+		@deuce = true
+	end
+
+	def deuce?
+		@deuce
 	end
 
 	def beat opponent
-		self.games_won += 1
+		self.points_won += 1
+		# if self.points_won == 3 && opponent.points_won == 3
+		# 	self.deuce!
+		# end
 	end
 
 end
