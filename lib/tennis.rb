@@ -12,12 +12,16 @@ class Player
 		@deuce = false
 	end
 
-	def deuce?
-		@deuce
-	end
-
 	def points_won
 		@points_won
+	end
+
+	def games_won
+		@games_won
+	end
+
+	def deuce?
+		@deuce
 	end
 
 	def score
@@ -43,21 +47,6 @@ class Player
 		opponent.points_won -= 1
 	end
 
-	def reset_points_versus opponent
-		self.points_won = 0
-		opponent.points_won = 0
-	end
-
-	def wins_game_over opponent
-		self.games_won += 1
-		reset_points_versus opponent
-		@deuce = false
-	end
-
-	def games_won
-		@games_won
-	end
-
 	def advantage_match_point_versus? opponent
 		deuce? && (self.points_won == 2)
 	end
@@ -74,7 +63,17 @@ class Player
 		self.points_won += 1
 		deuce_called_with! opponent if in_deuce_with? opponent
 		advantage_lost_against opponent if self.loses_advantage_over? opponent
-		self.wins_game_over opponent if wins_match_point_versus?(opponent)
+		self.wins_game_over opponent if wins_match_point_versus? opponent
 	end
 
+	def reset_points_versus opponent
+		self.points_won = 0
+		opponent.points_won = 0
+	end
+
+	def wins_game_over opponent
+		self.games_won += 1
+		reset_points_versus opponent
+		@deuce = false
+	end
 end
